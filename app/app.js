@@ -156,7 +156,7 @@ if (typeof document !== 'undefined') {
     list: load(KEYS.list, []),
     stats: load(KEYS.stats, {}),
     current: null, answered: false, session: { seen: 0, ok: 0 },
-    audio: null,
+    audio: null, voicesSettled: false,
   };
 
   function load(key, fallback) {
@@ -328,7 +328,7 @@ if (typeof document !== 'undefined') {
     const v = $('#verdict');
     v.textContent = ok ? '✓ Correct' : (skipped ? 'Skipped' : '✗ Not quite');
     v.className = ok ? 'ok' : 'bad';
-    if (ok) { $('#diff').textContent = it.text; } else renderDiff(it.text, given);
+    if (ok || !given.trim()) { $('#diff').textContent = it.text; } else renderDiff(it.text, given);
     const parts = [];
     if (it.gloss) parts.push(it.gloss);
     if (it.entry && it.entry.i) parts.push(it.entry.i);
@@ -337,7 +337,6 @@ if (typeof document !== 'undefined') {
     const link = attributionLink(it);
     if (link) { meaning.append(parts.length ? '  ·  ' : '', link); }
     $('#add-current').hidden = it.kind === 'number';
-    $('#say-word').hidden = it.kind === 'number' && false;
     $('#result').hidden = false;
     $('#check').hidden = true;
     $('#skip').hidden = true;
@@ -399,9 +398,12 @@ if (typeof document !== 'undefined') {
     const chosen = currentVoice();
     if (chosen) sel.value = chosen.voiceURI;
     const warn = $('#voice-warning');
-    if (!('speechSynthesis' in window)) { warn.textContent = 'This browser has no speech synthesis. Try Chrome or Safari.'; warn.hidden = false; }
-    else if (!cz.length && state.voices.length) { warn.textContent = 'No Czech voice is installed. Android: Settings › System › Languages › Text-to-speech › install Czech. iOS: Settings › Accessibility › Spoken Content › Voices › Czech.'; warn.hidden = false; }
-    else warn.hidden = cz.length > 0;
+    let msg = '';
+    if (!('speechSynthesis' in window)) msg = 'This browser has no speech synthesis. Try Chrome or Safari.';
+    else if (!cz.length && state.voices.length) msg = 'No Czech voice is installed. Android: Settings › System › Languages › Text-to-speech › install Czech. iOS: Settings › Accessibility › Spoken Content › Voices › Czech.';
+    else if (!cz.length && state.voicesSettled) msg = 'This browser reports no speech voices at all, so nothing can be played here.';
+    warn.textContent = msg;
+    warn.hidden = !msg;
   }
   function applySettingsToForm() {
     const s = state.settings;
@@ -469,7 +471,7 @@ if (typeof document !== 'undefined') {
       const loadVoices = () => { state.voices = speechSynthesis.getVoices(); renderVoices(); };
       loadVoices();
       speechSynthesis.onvoiceschanged = loadVoices;
-      setTimeout(loadVoices, 1000);
+      setTimeout(() => { state.voicesSettled = true; loadVoices(); }, 1500);
     } else renderVoices();
   }
 
