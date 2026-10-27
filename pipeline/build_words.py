@@ -168,11 +168,12 @@ def main(argv: list[str]) -> None:
     words.sort(key=lambda e: (e["r"] or 10**9, e["w"]))
     meta = {
         "count": len(words),
+        "license": "CC BY-SA 4.0 (derived work; see app/data/LICENSE.md)",
         "sources": [
-            "NTU-MC Czech WordNet (CC BY 4.0)",
-            "English Wiktionary via kaikki.org/wiktextract (CC BY-SA 3.0)",
-            "OpenSubtitles 2018 frequency list, hermitdave/FrequencyWords (CC BY-SA 4.0)",
-            "Open Multilingual Wordnet omw-en (WordNet licence)",
+            "NTU-MC Czech WordNet, Bond et al. 2013 (CC BY 4.0)",
+            "English Wiktionary via Wiktextract/kaikki.org, Ylonen 2022 (CC BY-SA 4.0)",
+            "Open Multilingual Wordnet omw-en 2.0, Bond & Foster 2013 (WordNet 3.0 licence)",
+            "FrequencyWords (OpenSubtitles2018), Hermit Dave (CC BY-SA 4.0)",
         ],
     }
     out_path.parent.mkdir(parents=True, exist_ok=True)

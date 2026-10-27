@@ -73,7 +73,14 @@ def main(argv: list[str]) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as fh:
         json.dump(
-            {"meta": {"count": len(out), "source": "Tatoeba (CC BY 2.0 FR)"}, "sentences": out},
+            {
+                "meta": {
+                    "count": len(out),
+                    "license": "CC BY 2.0 FR",
+                    "source": "Tatoeba, https://tatoeba.org/ (CC BY 2.0 FR); ids link to sentence pages",
+                },
+                "sentences": out,
+            },
             fh,
             ensure_ascii=False,
             separators=(",", ":"),

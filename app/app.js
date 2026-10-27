@@ -243,7 +243,7 @@ if (typeof document !== 'undefined') {
       }
       if (!pool.length) return null;
       const s = choice(pool);
-      return { kind: 'sentence', text: s.cs, gloss: s.en };
+      return { kind: 'sentence', text: s.cs, gloss: s.en, tatoeba: s.id };
     }
     const kind = mode === 'spell' ? 'spell' : 'word';
     let pool;
@@ -264,6 +264,16 @@ if (typeof document !== 'undefined') {
   }
 
   /* --- UI --- */
+  /** Link back to the source of a sentence (Tatoeba) or recording (Commons), for attribution. */
+  function attributionLink(it) {
+    let href = null, label = null;
+    if (it.kind === 'sentence' && it.tatoeba) { href = `https://tatoeba.org/sentences/show/${it.tatoeba}`; label = `Tatoeba #${it.tatoeba}`; }
+    else if (it.entry && it.entry.a) { href = `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(it.entry.a)}`; label = 'recording on Commons'; }
+    if (!href) return null;
+    const a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = label;
+    return a;
+  }
   function showItem(it) {
     state.current = it;
     state.answered = false;
@@ -322,7 +332,10 @@ if (typeof document !== 'undefined') {
     const parts = [];
     if (it.gloss) parts.push(it.gloss);
     if (it.entry && it.entry.i) parts.push(it.entry.i);
-    $('#meaning').textContent = parts.join('  ·  ');
+    const meaning = $('#meaning');
+    meaning.textContent = parts.join('  ·  ');
+    const link = attributionLink(it);
+    if (link) { meaning.append(parts.length ? '  ·  ' : '', link); }
     $('#add-current').hidden = it.kind === 'number';
     $('#say-word').hidden = it.kind === 'number' && false;
     $('#result').hidden = false;
@@ -464,8 +477,6 @@ if (typeof document !== 'undefined') {
     const [w, s] = await Promise.all([fetch('data/words.json'), fetch('data/sentences.json')]);
     const wd = await w.json(), sd = await s.json();
     state.words = wd.words; state.sentences = sd.sentences;
-    const src = $('#sources'); src.innerHTML = '';
-    for (const line of [...wd.meta.sources, sd.meta.source]) { const li = document.createElement('li'); li.textContent = line; src.appendChild(li); }
     $('#build').textContent = `Build ${BUILD} · ${wd.meta.count} words · ${sd.meta.count} sentences`;
   }
 

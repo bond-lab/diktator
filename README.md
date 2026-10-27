@@ -56,19 +56,54 @@ Unit tests for the pure helpers: `node pipeline/test_app.js`.
 
 ## Deploying
 
-Pushing to `main` runs `.github/workflows/pages.yml`, which stamps the service
-worker with the commit id and publishes `app/` to GitHub Pages. In the
-repository settings, set Pages → Source to “GitHub Actions” once.
+The app is published at https://bond-lab.github.io/diktator/. Pushing to
+`main` runs `.github/workflows/pages.yml`, which stamps the service worker
+with the commit id and publishes `app/` to GitHub Pages.
 
-## Data and licences
+## Licences
 
-| Source | Used for | Licence |
-|---|---|---|
-| [NTU-MC Czech WordNet](https://bond-lab.github.io/NTUMC/) | word pool, parts of speech | CC BY 4.0 |
-| English Wiktionary via [kaikki.org](https://kaikki.org/dictionary/Czech/) (wiktextract) | glosses, IPA, audio file names | CC BY-SA 3.0 |
-| [Open Multilingual Wordnet](https://omwn.org/) omw-en | glosses for WordNet-only words | WordNet licence |
-| [FrequencyWords](https://github.com/hermitdave/FrequencyWords) (OpenSubtitles 2018) | frequency bands | CC BY-SA 4.0 |
-| [Tatoeba](https://tatoeba.org/) | sentences with English translations | CC BY 2.0 FR |
-| [Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:Czech_pronunciation) and [Lingua Libre](https://lingualibre.org/) | human recordings, streamed on demand | CC BY-SA (per file) |
+The code in this repository is released under the MIT licence (see `LICENSE`).
 
-Code: MIT.
+The data packs in `app/data/` are derived works and are released under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), because they
+combine content from share-alike sources (see `app/data/LICENSE.md`). The app
+itself links each Tatoeba sentence and each Wikimedia Commons recording back
+to its source page.
+
+## Acknowledgements
+
+Diktátor would not exist without these freely licensed resources:
+
+- **NTU-MC Czech WordNet** (CC BY 4.0), https://bond-lab.github.io/NTUMC/.
+  Francis Bond, Shan Wang, Eshley Huini Gao, Hazel Shuwen Mok and Jeanette
+  Yiwen Tan (2013). Developing parallel sense-tagged corpora with wordnets.
+  *Proceedings of the 7th Linguistic Annotation Workshop and Interoperability
+  with Discourse (LAW 2013)*, pp. 149–158.
+- **English Wiktionary** (CC BY-SA 4.0, text also under GFDL),
+  https://en.wiktionary.org/, written by its volunteer contributors, as
+  extracted by **Wiktextract** and distributed at https://kaikki.org/.
+  Tatu Ylonen (2022). Wiktextract: Wiktionary as Machine-Readable Structured
+  Data. *Proceedings of the 13th Conference on Language Resources and
+  Evaluation (LREC 2022)*, pp. 1317–1325.
+- **Open Multilingual Wordnet**, English wordnet omw-en 2.0 (WordNet 3.0
+  licence), https://omwn.org/ and https://github.com/omwn/omw-data.
+  Francis Bond and Ryan Foster (2013). Linking and extending an open
+  multilingual wordnet. *Proceedings of the 51st Annual Meeting of the
+  Association for Computational Linguistics (ACL 2013)*, pp. 1352–1362.
+  Based on Princeton WordNet 3.0: George A. Miller (1995). WordNet: A lexical
+  database for English. *Communications of the ACM* 38(11), 39–41.
+- **FrequencyWords** by Hermit Dave (CC BY-SA 4.0),
+  https://github.com/hermitdave/FrequencyWords, computed from the
+  OpenSubtitles2018 corpus in OPUS. Pierre Lison and Jörg Tiedemann (2016).
+  OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV
+  Subtitles. *Proceedings of LREC 2016*, pp. 923–929.
+- **Tatoeba** (CC BY 2.0 FR), https://tatoeba.org/, sentences and
+  translations contributed by its members. Each sentence in the app links to
+  its Tatoeba page, which names the contributors.
+- **Wikimedia Commons** pronunciation recordings
+  (https://commons.wikimedia.org/wiki/Category:Czech_pronunciation),
+  including those made with **Lingua Libre** (https://lingualibre.org/,
+  CC BY-SA 4.0). Recordings are streamed from Commons and each one links to its
+  file page, which gives the author and licence.
+- Speech synthesis is provided by the user's own device (Google
+  Text-to-speech on Android, Apple voices on iOS).
