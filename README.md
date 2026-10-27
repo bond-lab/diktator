@@ -78,7 +78,13 @@ Diktátor would not exist without these freely licensed resources:
   Francis Bond, Shan Wang, Eshley Huini Gao, Hazel Shuwen Mok and Jeanette
   Yiwen Tan (2013). Developing parallel sense-tagged corpora with wordnets.
   *Proceedings of the 7th Linguistic Annotation Workshop and Interoperability
-  with Discourse (LAW 2013)*, pp. 149–158.
+  with Discourse (LAW 2013)*, pp. 149–158. It is based on **Czech WordNet
+  2.1** from the NLP Centre, Faculty of Informatics, Masaryk University,
+  released under a WordNet-style open licence
+  (https://deb.fi.muni.cz/wnlicense.php). Adam Rambousek, Aleš Horák and
+  Karel Pala (2018). Sustainable long-term WordNet development and
+  maintenance: Case study of the Czech WordNet. *Cognitive Studies | Études
+  cognitives* 18. https://doi.org/10.11649/cs.1715
 - **English Wiktionary** (CC BY-SA 4.0, text also under GFDL),
   https://en.wiktionary.org/, written by its volunteer contributors, as
   extracted by **Wiktextract** and distributed at https://kaikki.org/.
@@ -90,8 +96,8 @@ Diktátor would not exist without these freely licensed resources:
   Francis Bond and Ryan Foster (2013). Linking and extending an open
   multilingual wordnet. *Proceedings of the 51st Annual Meeting of the
   Association for Computational Linguistics (ACL 2013)*, pp. 1352–1362.
-  Based on Princeton WordNet 3.0: George A. Miller (1995). WordNet: A lexical
-  database for English. *Communications of the ACM* 38(11), 39–41.
+  Based on **Princeton WordNet 3.0**: Christiane Fellbaum (ed.) (1998).
+  *WordNet: An Electronic Lexical Database*. MIT Press, Cambridge, MA.
 - **FrequencyWords** by Hermit Dave (CC BY-SA 4.0),
   https://github.com/hermitdave/FrequencyWords, computed from the
   OpenSubtitles2018 corpus in OPUS. Pierre Lison and Jörg Tiedemann (2016).

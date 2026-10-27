@@ -8,9 +8,9 @@ their licences are:
 
 | Source | Used for | Licence |
 |---|---|---|
-| NTU-MC Czech WordNet, Bond et al. (2013) | word pool, parts of speech | CC BY 4.0 |
+| NTU-MC Czech WordNet, Bond et al. (2013), based on Czech WordNet 2.1, NLP Centre, Masaryk University (Rambousek, Horák & Pala 2018) | word pool, parts of speech | CC BY 4.0; Czech WordNet 2.1 under a WordNet-style open licence |
 | English Wiktionary, extracted with Wiktextract (Ylonen 2022) via kaikki.org | glosses, IPA, audio file names | CC BY-SA 4.0 (text also available under GFDL) |
-| Open Multilingual Wordnet, English (omw-en 2.0), Bond & Foster (2013); Princeton WordNet 3.0 | glosses for words not in Wiktionary | WordNet 3.0 licence |
+| Open Multilingual Wordnet, English (omw-en 2.0), Bond & Foster (2013), based on Princeton WordNet 3.0 (Fellbaum 1998) | glosses for words not in Wiktionary | WordNet 3.0 licence |
 | FrequencyWords by Hermit Dave, from OpenSubtitles2018 (Lison & Tiedemann 2016) | frequency ranks | CC BY-SA 4.0 |
 | Tatoeba | sentences and English translations; each carries its Tatoeba id | CC BY 2.0 FR |
 

@@ -170,9 +170,15 @@ def main(argv: list[str]) -> None:
         "count": len(words),
         "license": "CC BY-SA 4.0 (derived work; see app/data/LICENSE.md)",
         "sources": [
-            "NTU-MC Czech WordNet, Bond et al. 2013 (CC BY 4.0)",
+            (
+                "NTU-MC Czech WordNet, Bond et al. 2013 (CC BY 4.0), based on Czech WordNet 2.1, "
+                "NLP Centre, Masaryk University, Rambousek, Horák & Pala 2018"
+            ),
             "English Wiktionary via Wiktextract/kaikki.org, Ylonen 2022 (CC BY-SA 4.0)",
-            "Open Multilingual Wordnet omw-en 2.0, Bond & Foster 2013 (WordNet 3.0 licence)",
+            (
+                "Open Multilingual Wordnet omw-en 2.0, Bond & Foster 2013, based on "
+                "Princeton WordNet 3.0, Fellbaum 1998 (WordNet 3.0 licence)"
+            ),
             "FrequencyWords (OpenSubtitles2018), Hermit Dave (CC BY-SA 4.0)",
         ],
     }
