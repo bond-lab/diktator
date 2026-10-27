@@ -1,0 +1,9 @@
+# raw downloads live outside the repo (see README)
+raw/
+.venv/
+__pycache__/
+*.pyc
+.ruff_cache/
+.~lock.*
+*.swp
+.DS_Store

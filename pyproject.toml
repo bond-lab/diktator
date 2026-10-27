@@ -1,0 +1,9 @@
+[project]
+name = "diktator-pipeline"
+version = "0.1.0"
+description = "Builds the word and sentence packs for the Diktátor Czech dictation PWA"
+requires-python = ">=3.11"
+dependencies = ["wn>=1.1"]
+
+[tool.ruff]
+line-length = 100

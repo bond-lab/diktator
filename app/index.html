@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diktátor</title>
+<meta name="description" content="Czech dictation practice: spelling, words, sentences and numbers.">
+<meta name="theme-color" content="#1b4965">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Diktátor">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Diktátor</h1>
+  <nav id="tabs">
+    <button data-tab="practice" class="active">Practice</button>
+    <button data-tab="list">My list</button>
+    <button data-tab="settings">Settings</button>
+    <button data-tab="about">About</button>
+  </nav>
+</header>
+
+<main>
+<section id="tab-practice" class="tab active">
+  <div class="row">
+    <label>Mode
+      <select id="mode">
+        <option value="spell">Spelling (letters read out)</option>
+        <option value="word">Dictation: words</option>
+        <option value="sentence">Dictation: sentences</option>
+        <option value="number">Numbers and dates</option>
+      </select>
+    </label>
+    <label>Source
+      <select id="source">
+        <option value="random">Random sample</option>
+        <option value="list">My list</option>
+        <option value="missed">Words I got wrong</option>
+      </select>
+    </label>
+  </div>
+
+  <div id="card">
+    <div id="prompt-area">
+      <button id="play" class="big">▶ Play</button>
+      <button id="play-slow" title="Play slowly">🐢</button>
+      <span id="hint" class="muted"></span>
+    </div>
+    <form id="answer-form" autocomplete="off">
+      <input id="answer" type="text" lang="cs" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type what you hear…">
+      <div class="row">
+        <button type="submit" id="check" class="primary">Check</button>
+        <button type="button" id="skip">Skip</button>
+        <button type="button" id="next" hidden class="primary">Next ›</button>
+      </div>
+    </form>
+    <div id="result" hidden>
+      <div id="verdict"></div>
+      <div id="diff"></div>
+      <div id="meaning" class="muted"></div>
+      <div class="row">
+        <button type="button" id="say-word">🔊 Hear it</button>
+        <button type="button" id="add-current">＋ Add to my list</button>
+      </div>
+    </div>
+  </div>
+  <div id="stats" class="muted"></div>
+  <p id="voice-warning" class="warn" hidden></p>
+</section>
+
+<section id="tab-list" class="tab">
+  <form id="add-form" class="row">
+    <input id="add-word" type="text" lang="cs" autocapitalize="off" autocorrect="off" placeholder="Czech word or phrase">
+    <input id="add-gloss" type="text" placeholder="meaning (optional)">
+    <button type="submit" class="primary">Add</button>
+  </form>
+  <p class="muted">Words you add here are used when Source is “My list”. If the word is in the dictionary its meaning and recording are filled in for you.</p>
+  <ul id="my-list"></ul>
+  <div class="row">
+    <button id="export-list">Export</button>
+    <button id="import-list">Import</button>
+    <input id="import-file" type="file" accept="application/json" hidden>
+  </div>
+</section>
+
+<section id="tab-settings" class="tab">
+  <h2>Voice</h2>
+  <label>Czech voice
+    <select id="voice"></select>
+  </label>
+  <label>Speed <input id="rate" type="range" min="0.5" max="1.3" step="0.05" value="0.95"> <span id="rate-val"></span></label>
+  <label><input id="prefer-recordings" type="checkbox"> Prefer human recordings (Wikimedia Commons) when online</label>
+  <label><input id="auto-play" type="checkbox" checked> Play automatically when a new item appears</label>
+  <button id="test-voice">Test voice</button>
+
+  <h2>Random sample</h2>
+  <fieldset id="pos-filter">
+    <legend>Parts of speech</legend>
+    <label><input type="checkbox" value="n" checked> nouns</label>
+    <label><input type="checkbox" value="v" checked> verbs</label>
+    <label><input type="checkbox" value="a" checked> adjectives</label>
+    <label><input type="checkbox" value="r" checked> adverbs</label>
+    <label><input type="checkbox" value="m"> numerals</label>
+  </fieldset>
+  <fieldset id="band-filter">
+    <legend>Frequency band (OpenSubtitles rank)</legend>
+    <label><input type="checkbox" value="1" checked> 1–2 000</label>
+    <label><input type="checkbox" value="2" checked> 2 001–5 000</label>
+    <label><input type="checkbox" value="3" checked> 5 001–15 000</label>
+    <label><input type="checkbox" value="4"> 15 001–50 000</label>
+    <label><input type="checkbox" value="5"> unranked (rare)</label>
+  </fieldset>
+  <label>Minimum word length <input id="min-len" type="number" min="1" max="20" value="3"></label>
+
+  <h2>Numbers</h2>
+  <fieldset id="number-kinds">
+    <legend>Kinds</legend>
+    <label><input type="checkbox" value="small" checked> 0–100</label>
+    <label><input type="checkbox" value="medium" checked> 100–10 000</label>
+    <label><input type="checkbox" value="large"> 10 000–10 000 000</label>
+    <label><input type="checkbox" value="year" checked> years</label>
+    <label><input type="checkbox" value="date" checked> dates (d. m. yyyy)</label>
+    <label><input type="checkbox" value="time"> times (hh:mm)</label>
+  </fieldset>
+
+  <h2>Checking</h2>
+  <label><input id="case-sensitive" type="checkbox"> Case-sensitive</label>
+  <label><input id="punct-sensitive" type="checkbox"> Punctuation-sensitive (sentences)</label>
+
+  <h2>Data</h2>
+  <button id="reset-stats" class="danger">Reset progress</button>
+</section>
+
+<section id="tab-about" class="tab">
+  <h2>About</h2>
+  <p>Diktátor is a small offline-capable web app for practising Czech dictation. Install it from your browser menu (“Add to Home Screen”).</p>
+  <p>Speech comes from your phone’s own Czech text-to-speech voice. On Android install the Czech voice in Google Text-to-speech settings; on iOS add a Czech voice under Settings › Accessibility › Spoken Content › Voices.</p>
+  <h3>Spelling alphabet</h3>
+  <p>Letters are read out with Czech letter names: <span id="alphabet"></span></p>
+  <h3>Data</h3>
+  <ul id="sources"></ul>
+  <p class="muted" id="build"></p>
+</section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
