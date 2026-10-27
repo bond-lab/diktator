@@ -7,6 +7,14 @@ assert.deepEqual(app.spellingUnits('chléb'), ['ch', 'l', 'é', 'b']);
 assert.deepEqual(app.spellingUnits('Pochod'), ['p', 'o', 'ch', 'o', 'd']);
 assert.deepEqual(app.spellingUnits('dům'), ['d', 'ů', 'm']);
 for (const u of app.spellingUnits('příšerně hřích žluťoučký kůň')) assert.ok(app.LETTER_NAMES[u], `no name for ${u}`);
+assert.equal(app.letterName('b'), 'bé');
+assert.equal(app.letterName('y', (a) => a[0]), 'tvrdé y');
+assert.equal(app.letterName('y', (a) => a[1]), 'ypsilon');
+assert.equal(app.letterName('o', (a) => a[1]), 'krátké o');
+assert.equal(app.letterName('ó'), 'dlouhé ó');
+assert.ok(['měkké i', 'krátké měkké i'].includes(app.letterName('i')));
+assert.equal(app.letterName('ch'), 'chá');
+assert.equal(app.letterName('9'), '9');
 
 assert.equal(app.band(0), 5); assert.equal(app.band(1), 1); assert.equal(app.band(2000), 1);
 assert.equal(app.band(2001), 2); assert.equal(app.band(15000), 3); assert.equal(app.band(15001), 4);

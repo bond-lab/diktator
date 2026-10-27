@@ -4,15 +4,29 @@
 const BUILD = '__BUILD__';
 const KEYS = { settings: 'diktator.settings', list: 'diktator.list', stats: 'diktator.stats' };
 
-/** Czech letter names used in spelling mode. 'ch' is one letter. */
+/** Czech letter names used in spelling mode. 'ch' is one letter. Where people
+ *  say a letter several ways, all variants are listed and one is picked at random. */
 const LETTER_NAMES = {
-  a: 'a', á: 'dlouhé á', b: 'bé', c: 'cé', č: 'čé', d: 'dé', ď: 'ďé', e: 'e', é: 'dlouhé é',
-  ě: 'e s háčkem', f: 'ef', g: 'gé', h: 'há', ch: 'chá', i: 'měkké i', í: 'měkké dlouhé í',
-  j: 'jé', k: 'ká', l: 'el', m: 'em', n: 'en', ň: 'eň', o: 'o', ó: 'dlouhé ó', p: 'pé', q: 'kvé',
-  r: 'er', ř: 'eř', s: 'es', š: 'eš', t: 'té', ť: 'ťé', u: 'u', ú: 'ú s čárkou', ů: 'u s kroužkem',
-  v: 'vé', w: 'dvojité vé', x: 'iks', y: 'tvrdé y', ý: 'tvrdé dlouhé ý', z: 'zet', ž: 'žet',
+  a: ['a', 'krátké a'], á: ['dlouhé á'], b: 'bé', c: 'cé', č: 'čé', d: 'dé', ď: 'ďé',
+  e: ['e', 'krátké e'], é: ['dlouhé é'], ě: ['e s háčkem', 'ije'], f: 'ef', g: 'gé', h: 'há', ch: 'chá',
+  i: ['měkké i', 'krátké měkké i'], í: ['dlouhé měkké í', 'měkké dlouhé í'],
+  j: 'jé', k: 'ká', l: 'el', m: 'em', n: 'en', ň: 'eň',
+  o: ['o', 'krátké o'], ó: ['dlouhé ó'], p: 'pé', q: 'kvé',
+  r: 'er', ř: 'eř', s: 'es', š: 'eš', t: 'té', ť: 'ťé',
+  u: ['u', 'krátké u'], ú: ['ú s čárkou', 'dlouhé ú s čárkou'], ů: ['u s kroužkem', 'dlouhé u s kroužkem'],
+  v: 'vé', w: 'dvojité vé', x: 'iks',
+  y: ['tvrdé y', 'ypsilon'], ý: ['tvrdé dlouhé ý', 'dlouhé tvrdé ý', 'dlouhé ypsilon'],
+  z: 'zet', ž: 'žet',
   '-': 'pomlčka', ' ': 'mezera', "'": 'apostrof',
 };
+
+/** Spoken name for one spelling unit; picks one variant at random when several exist. */
+function letterName(unit, pick = (arr) => arr[Math.floor(Math.random() * arr.length)]) {
+  const v = LETTER_NAMES[unit];
+  if (v === undefined) return unit;
+  return Array.isArray(v) ? pick(v) : v;
+}
+
 const POS_NAMES = { n: 'noun', v: 'verb', a: 'adjective', r: 'adverb', m: 'numeral' };
 const MONTHS_GEN = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července',
   'srpna', 'září', 'října', 'listopadu', 'prosince'];
@@ -129,7 +143,7 @@ function commonsMp3(name, h) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { spellingUnits, band, normalize, charDiff, makeNumberItem, dayOrdinal, commonsMp3, LETTER_NAMES };
+  module.exports = { spellingUnits, letterName, band, normalize, charDiff, makeNumberItem, dayOrdinal, commonsMp3, LETTER_NAMES };
 }
 
 /* ---------- app ---------- */
@@ -182,8 +196,7 @@ if (typeof document !== 'undefined') {
     if (!('speechSynthesis' in window)) return;
     stopAudio();
     for (const unit of spellingUnits(word)) {
-      const name = LETTER_NAMES[unit] || unit;
-      speechSynthesis.speak(utter(name, rate * 0.9));
+      speechSynthesis.speak(utter(letterName(unit), rate * 0.9));
     }
   }
   function playRecording(entry, onFail) {
@@ -460,7 +473,7 @@ if (typeof document !== 'undefined') {
     wire();
     applySettingsToForm();
     renderList();
-    $('#alphabet').textContent = Object.entries(LETTER_NAMES).filter(([k]) => k.trim() && k !== '-' && k !== "'").map(([k, v]) => `${k} = ${v}`).join(', ');
+    $('#alphabet').textContent = Object.entries(LETTER_NAMES).filter(([k]) => k.trim() && k !== '-' && k !== "'").map(([k, v]) => `${k} = ${Array.isArray(v) ? v.join(' / ') : v}`).join(', ');
     try { await loadData(); } catch (e) { $('#hint').textContent = `Could not load data: ${e.message}`; return; }
     renderStats();
     // Do not auto-play before the first user gesture: browsers block it.
