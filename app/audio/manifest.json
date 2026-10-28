@@ -1,0 +1,380 @@
+{
+ "meta": {
+  "voice": "cs_CZ-jirka-medium",
+  "source": "https://huggingface.co/rhasspy/piper-voices",
+  "license": "Synthesised with Piper (MIT); jirka voice dataset CC0"
+ },
+ "letters": {
+  "a": "letters/a-86f7e4.mp3",
+  "krátké a": "letters/kratke_a-367d47.mp3",
+  "dlouhé á": "letters/dlouhe_a-0c45d1.mp3",
+  "bé": "letters/be-be67c5.mp3",
+  "cé": "letters/ce-d1bc94.mp3",
+  "čé": "letters/ce-6ee2b7.mp3",
+  "dé": "letters/de-984c87.mp3",
+  "ďé": "letters/de-37d858.mp3",
+  "e": "letters/e-58e6b3.mp3",
+  "krátké e": "letters/kratke_e-d83536.mp3",
+  "dlouhé é": "letters/dlouhe_e-1dba91.mp3",
+  "e s háčkem": "letters/e_s_hackem-58ecdb.mp3",
+  "ije": "letters/ije-0a541d.mp3",
+  "ef": "letters/ef-f82205.mp3",
+  "gé": "letters/ge-e2682d.mp3",
+  "há": "letters/ha-570b50.mp3",
+  "chá": "letters/cha-a1f7a6.mp3",
+  "měkké i": "letters/mekke_i-272093.mp3",
+  "krátké měkké i": "letters/kratke_mekke_i-e7b64f.mp3",
+  "dlouhé měkké í": "letters/dlouhe_mekke_i-5d318e.mp3",
+  "měkké dlouhé í": "letters/mekke_dlouhe_i-e0e1b5.mp3",
+  "jé": "letters/je-b7019c.mp3",
+  "ká": "letters/ka-a0dcf0.mp3",
+  "el": "letters/el-4f1ea4.mp3",
+  "em": "letters/em-934706.mp3",
+  "en": "letters/en-094b0f.mp3",
+  "eň": "letters/en-93ab05.mp3",
+  "o": "letters/o-7a81af.mp3",
+  "krátké o": "letters/kratke_o-9d4e71.mp3",
+  "dlouhé ó": "letters/dlouhe_o-377c19.mp3",
+  "pé": "letters/pe-69a11c.mp3",
+  "kvé": "letters/kve-ab9bc3.mp3",
+  "er": "letters/er-602c57.mp3",
+  "eř": "letters/er-44b51a.mp3",
+  "es": "letters/es-09cd68.mp3",
+  "eš": "letters/es-c96f22.mp3",
+  "té": "letters/te-77bb3d.mp3",
+  "ťé": "letters/te-1154d1.mp3",
+  "u": "letters/u-51e698.mp3",
+  "krátké u": "letters/kratke_u-44a6c4.mp3",
+  "ú s čárkou": "letters/u_s_carkou-ce1b8e.mp3",
+  "dlouhé ú s čárkou": "letters/dlouhe_u_s_carkou-60bd16.mp3",
+  "u s kroužkem": "letters/u_s_krouzkem-8b73e4.mp3",
+  "dlouhé u s kroužkem": "letters/dlouhe_u_s_krouzkem-0c675c.mp3",
+  "vé": "letters/ve-cabe1a.mp3",
+  "dvojité vé": "letters/dvojite_ve-f87301.mp3",
+  "iks": "letters/iks-9286f5.mp3",
+  "tvrdé y": "letters/tvrde_y-4763ab.mp3",
+  "ypsilon": "letters/ypsilon-0765d3.mp3",
+  "tvrdé dlouhé ý": "letters/tvrde_dlouhe_y-ae2d1f.mp3",
+  "dlouhé tvrdé ý": "letters/dlouhe_tvrde_y-68af08.mp3",
+  "dlouhé ypsilon": "letters/dlouhe_ypsilon-c92a1b.mp3",
+  "zet": "letters/zet-0ab4fc.mp3",
+  "žet": "letters/zet-82bc8a.mp3",
+  "pomlčka": "letters/pomlcka-549817.mp3",
+  "mezera": "letters/mezera-e98e3e.mp3",
+  "apostrof": "letters/apostrof-dd51b0.mp3"
+ },
+ "numbers": {
+  "nula": {
+   "m": "numbers/nula-54824f-m.mp3",
+   "f": "numbers/nula-54824f-f.mp3"
+  },
+  "jedna": {
+   "m": "numbers/jedna-6c3f8d-m.mp3",
+   "f": "numbers/jedna-6c3f8d-f.mp3"
+  },
+  "dva": {
+   "m": "numbers/dva-2e4bd4-m.mp3",
+   "f": "numbers/dva-2e4bd4-f.mp3"
+  },
+  "tři": {
+   "m": "numbers/tri-0f8a03-m.mp3",
+   "f": "numbers/tri-0f8a03-f.mp3"
+  },
+  "čtyři": {
+   "m": "numbers/ctyri-4c04cb-m.mp3",
+   "f": "numbers/ctyri-4c04cb-f.mp3"
+  },
+  "pět": {
+   "m": "numbers/pet-3687e1-m.mp3",
+   "f": "numbers/pet-3687e1-f.mp3"
+  },
+  "šest": {
+   "m": "numbers/sest-51201d-m.mp3",
+   "f": "numbers/sest-51201d-f.mp3"
+  },
+  "sedm": {
+   "m": "numbers/sedm-1df438-m.mp3",
+   "f": "numbers/sedm-1df438-f.mp3"
+  },
+  "osm": {
+   "m": "numbers/osm-1fb429-m.mp3",
+   "f": "numbers/osm-1fb429-f.mp3"
+  },
+  "devět": {
+   "m": "numbers/devet-e08b8a-m.mp3",
+   "f": "numbers/devet-e08b8a-f.mp3"
+  },
+  "deset": {
+   "m": "numbers/deset-226c31-m.mp3",
+   "f": "numbers/deset-226c31-f.mp3"
+  },
+  "jedenáct": {
+   "m": "numbers/jedenact-9f089c-m.mp3",
+   "f": "numbers/jedenact-9f089c-f.mp3"
+  },
+  "dvanáct": {
+   "m": "numbers/dvanact-3bd83f-m.mp3",
+   "f": "numbers/dvanact-3bd83f-f.mp3"
+  },
+  "třináct": {
+   "m": "numbers/trinact-2c3494-m.mp3",
+   "f": "numbers/trinact-2c3494-f.mp3"
+  },
+  "čtrnáct": {
+   "m": "numbers/ctrnact-5ac490-m.mp3",
+   "f": "numbers/ctrnact-5ac490-f.mp3"
+  },
+  "patnáct": {
+   "m": "numbers/patnact-f066c6-m.mp3",
+   "f": "numbers/patnact-f066c6-f.mp3"
+  },
+  "šestnáct": {
+   "m": "numbers/sestnact-2508f1-m.mp3",
+   "f": "numbers/sestnact-2508f1-f.mp3"
+  },
+  "sedmnáct": {
+   "m": "numbers/sedmnact-540a0d-m.mp3",
+   "f": "numbers/sedmnact-540a0d-f.mp3"
+  },
+  "osmnáct": {
+   "m": "numbers/osmnact-73ae6f-m.mp3",
+   "f": "numbers/osmnact-73ae6f-f.mp3"
+  },
+  "devatenáct": {
+   "m": "numbers/devatenact-fd4668-m.mp3",
+   "f": "numbers/devatenact-fd4668-f.mp3"
+  },
+  "dvacet": {
+   "m": "numbers/dvacet-28fbe1-m.mp3",
+   "f": "numbers/dvacet-28fbe1-f.mp3"
+  },
+  "třicet": {
+   "m": "numbers/tricet-78da4a-m.mp3",
+   "f": "numbers/tricet-78da4a-f.mp3"
+  },
+  "čtyřicet": {
+   "m": "numbers/ctyricet-07281d-m.mp3",
+   "f": "numbers/ctyricet-07281d-f.mp3"
+  },
+  "padesát": {
+   "m": "numbers/padesat-384ef9-m.mp3",
+   "f": "numbers/padesat-384ef9-f.mp3"
+  },
+  "šedesát": {
+   "m": "numbers/sedesat-f0966d-m.mp3",
+   "f": "numbers/sedesat-f0966d-f.mp3"
+  },
+  "sedmdesát": {
+   "m": "numbers/sedmdesat-adb9c4-m.mp3",
+   "f": "numbers/sedmdesat-adb9c4-f.mp3"
+  },
+  "osmdesát": {
+   "m": "numbers/osmdesat-af5681-m.mp3",
+   "f": "numbers/osmdesat-af5681-f.mp3"
+  },
+  "devadesát": {
+   "m": "numbers/devadesat-0898b9-m.mp3",
+   "f": "numbers/devadesat-0898b9-f.mp3"
+  },
+  "sto": {
+   "m": "numbers/sto-9a4979-m.mp3",
+   "f": "numbers/sto-9a4979-f.mp3"
+  },
+  "dvě": {
+   "m": "numbers/dve-6cc720-m.mp3",
+   "f": "numbers/dve-6cc720-f.mp3"
+  },
+  "stě": {
+   "m": "numbers/ste-94d31e-m.mp3",
+   "f": "numbers/ste-94d31e-f.mp3"
+  },
+  "sta": {
+   "m": "numbers/sta-637093-m.mp3",
+   "f": "numbers/sta-637093-f.mp3"
+  },
+  "set": {
+   "m": "numbers/set-65c10d-m.mp3",
+   "f": "numbers/set-65c10d-f.mp3"
+  },
+  "tisíc": {
+   "m": "numbers/tisic-212b76-m.mp3",
+   "f": "numbers/tisic-212b76-f.mp3"
+  },
+  "tisíce": {
+   "m": "numbers/tisice-c64048-m.mp3",
+   "f": "numbers/tisice-c64048-f.mp3"
+  },
+  "milion": {
+   "m": "numbers/milion-8f2ea9-m.mp3",
+   "f": "numbers/milion-8f2ea9-f.mp3"
+  },
+  "miliony": {
+   "m": "numbers/miliony-b957f8-m.mp3",
+   "f": "numbers/miliony-b957f8-f.mp3"
+  },
+  "milionů": {
+   "m": "numbers/milionu-a31903-m.mp3",
+   "f": "numbers/milionu-a31903-f.mp3"
+  },
+  "rok": {
+   "m": "numbers/rok-91d1dd-m.mp3",
+   "f": "numbers/rok-91d1dd-f.mp3"
+  },
+  "prvního": {
+   "m": "numbers/prvniho-972e3d-m.mp3",
+   "f": "numbers/prvniho-972e3d-f.mp3"
+  },
+  "druhého": {
+   "m": "numbers/druheho-65473d-m.mp3",
+   "f": "numbers/druheho-65473d-f.mp3"
+  },
+  "třetího": {
+   "m": "numbers/tretiho-fb185f-m.mp3",
+   "f": "numbers/tretiho-fb185f-f.mp3"
+  },
+  "čtvrtého": {
+   "m": "numbers/ctvrteho-23bfae-m.mp3",
+   "f": "numbers/ctvrteho-23bfae-f.mp3"
+  },
+  "pátého": {
+   "m": "numbers/pateho-1db590-m.mp3",
+   "f": "numbers/pateho-1db590-f.mp3"
+  },
+  "šestého": {
+   "m": "numbers/sesteho-131c20-m.mp3",
+   "f": "numbers/sesteho-131c20-f.mp3"
+  },
+  "sedmého": {
+   "m": "numbers/sedmeho-9cb501-m.mp3",
+   "f": "numbers/sedmeho-9cb501-f.mp3"
+  },
+  "osmého": {
+   "m": "numbers/osmeho-877049-m.mp3",
+   "f": "numbers/osmeho-877049-f.mp3"
+  },
+  "devátého": {
+   "m": "numbers/devateho-5542b9-m.mp3",
+   "f": "numbers/devateho-5542b9-f.mp3"
+  },
+  "desátého": {
+   "m": "numbers/desateho-863765-m.mp3",
+   "f": "numbers/desateho-863765-f.mp3"
+  },
+  "jedenáctého": {
+   "m": "numbers/jedenacteho-d33522-m.mp3",
+   "f": "numbers/jedenacteho-d33522-f.mp3"
+  },
+  "dvanáctého": {
+   "m": "numbers/dvanacteho-454a54-m.mp3",
+   "f": "numbers/dvanacteho-454a54-f.mp3"
+  },
+  "třináctého": {
+   "m": "numbers/trinacteho-fd1313-m.mp3",
+   "f": "numbers/trinacteho-fd1313-f.mp3"
+  },
+  "čtrnáctého": {
+   "m": "numbers/ctrnacteho-6c6449-m.mp3",
+   "f": "numbers/ctrnacteho-6c6449-f.mp3"
+  },
+  "patnáctého": {
+   "m": "numbers/patnacteho-bf2325-m.mp3",
+   "f": "numbers/patnacteho-bf2325-f.mp3"
+  },
+  "šestnáctého": {
+   "m": "numbers/sestnacteho-98c43c-m.mp3",
+   "f": "numbers/sestnacteho-98c43c-f.mp3"
+  },
+  "sedmnáctého": {
+   "m": "numbers/sedmnacteho-f7fb8a-m.mp3",
+   "f": "numbers/sedmnacteho-f7fb8a-f.mp3"
+  },
+  "osmnáctého": {
+   "m": "numbers/osmnacteho-0a1618-m.mp3",
+   "f": "numbers/osmnacteho-0a1618-f.mp3"
+  },
+  "devatenáctého": {
+   "m": "numbers/devatenacteho-8680e1-m.mp3",
+   "f": "numbers/devatenacteho-8680e1-f.mp3"
+  },
+  "dvacátého": {
+   "m": "numbers/dvacateho-a5f7ee-m.mp3",
+   "f": "numbers/dvacateho-a5f7ee-f.mp3"
+  },
+  "třicátého": {
+   "m": "numbers/tricateho-3aca24-m.mp3",
+   "f": "numbers/tricateho-3aca24-f.mp3"
+  },
+  "ledna": {
+   "m": "numbers/ledna-7bd4a2-m.mp3",
+   "f": "numbers/ledna-7bd4a2-f.mp3"
+  },
+  "února": {
+   "m": "numbers/unora-51ee29-m.mp3",
+   "f": "numbers/unora-51ee29-f.mp3"
+  },
+  "března": {
+   "m": "numbers/brezna-c74665-m.mp3",
+   "f": "numbers/brezna-c74665-f.mp3"
+  },
+  "dubna": {
+   "m": "numbers/dubna-7c260e-m.mp3",
+   "f": "numbers/dubna-7c260e-f.mp3"
+  },
+  "května": {
+   "m": "numbers/kvetna-bd9647-m.mp3",
+   "f": "numbers/kvetna-bd9647-f.mp3"
+  },
+  "června": {
+   "m": "numbers/cervna-2c19ea-m.mp3",
+   "f": "numbers/cervna-2c19ea-f.mp3"
+  },
+  "července": {
+   "m": "numbers/cervence-481361-m.mp3",
+   "f": "numbers/cervence-481361-f.mp3"
+  },
+  "srpna": {
+   "m": "numbers/srpna-97e604-m.mp3",
+   "f": "numbers/srpna-97e604-f.mp3"
+  },
+  "září": {
+   "m": "numbers/zari-94a8a3-m.mp3",
+   "f": "numbers/zari-94a8a3-f.mp3"
+  },
+  "října": {
+   "m": "numbers/rijna-dfa8d5-m.mp3",
+   "f": "numbers/rijna-dfa8d5-f.mp3"
+  },
+  "listopadu": {
+   "m": "numbers/listopadu-95bf7b-m.mp3",
+   "f": "numbers/listopadu-95bf7b-f.mp3"
+  },
+  "prosince": {
+   "m": "numbers/prosince-1c72a6-m.mp3",
+   "f": "numbers/prosince-1c72a6-f.mp3"
+  },
+  "hodina": {
+   "m": "numbers/hodina-d89ec4-m.mp3",
+   "f": "numbers/hodina-d89ec4-f.mp3"
+  },
+  "hodiny": {
+   "m": "numbers/hodiny-db8dae-m.mp3",
+   "f": "numbers/hodiny-db8dae-f.mp3"
+  },
+  "hodin": {
+   "m": "numbers/hodin-a48a9d-m.mp3",
+   "f": "numbers/hodin-a48a9d-f.mp3"
+  },
+  "minuta": {
+   "m": "numbers/minuta-138a75-m.mp3",
+   "f": "numbers/minuta-138a75-f.mp3"
+  },
+  "minuty": {
+   "m": "numbers/minuty-ff2ec3-m.mp3",
+   "f": "numbers/minuty-ff2ec3-f.mp3"
+  },
+  "minut": {
+   "m": "numbers/minut-f920de-m.mp3",
+   "f": "numbers/minut-f920de-f.mp3"
+  }
+ }
+}

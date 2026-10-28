@@ -5,5 +5,9 @@ description = "Builds the word and sentence packs for the Diktátor Czech dictat
 requires-python = ">=3.11"
 dependencies = ["wn>=1.1"]
 
+[dependency-groups]
+audio = ["piper-tts>=1.3"]
+test = ["pytest>=8"]
+
 [tool.ruff]
 line-length = 100

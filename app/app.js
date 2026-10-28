@@ -36,7 +36,7 @@ const ORDINAL_GEN = ['', 'prvního', 'druhého', 'třetího', 'čtvrtého', 'pá
   'dvacátého'];
 
 const DEFAULT_SETTINGS = {
-  voice: '', rate: 0.95, preferRecordings: false, autoPlay: true,
+  voice: '', rate: 0.95, useClips: true, preferRecordings: false, autoPlay: true,
   pos: ['n', 'v', 'a', 'r'], bands: [1, 2, 3], minLen: 3,
   numberKinds: ['small', 'medium', 'year', 'date'],
   caseSensitive: false, punctSensitive: false,
@@ -101,11 +101,17 @@ function charDiff(expected, given) {
 function randInt(lo, hi) { return lo + Math.floor(Math.random() * (hi - lo + 1)); }
 function choice(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-/** Czech plural form picker for counts (1 / 2-4 / other). */
+/** Czech plural form picker for counts (1 / 2-4 / other), as used after a numeral. */
 function plural(n, one, few, many) {
   if (n === 1) return one;
-  if (n >= 2 && n <= 4) return few;
+  const last = n % 100;
+  if (last % 10 >= 2 && last % 10 <= 4 && (last < 12 || last > 14)) return few;
   return many;
+}
+
+/** Use the feminine 'dvě' when a count ends in 2 and the noun is feminine (hodiny, minuty). */
+function feminine(units) {
+  return units.map((u, i) => (u === 'dva' && i === units.length - 1 ? 'dvě' : u));
 }
 
 /** Spoken form of a day-of-month ordinal in the genitive. */
@@ -116,22 +122,57 @@ function dayOrdinal(d) {
   return `${tens} ${ORDINAL_GEN[d % 10]}`;
 }
 
-/** Make a number/date/time item. `say` is what the voice reads, `text` the expected answer. */
+const ONES = ['nula', 'jedna', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset',
+  'jedenáct', 'dvanáct', 'třináct', 'čtrnáct', 'patnáct', 'šestnáct', 'sedmnáct', 'osmnáct', 'devatenáct'];
+const TENS = ['', '', 'dvacet', 'třicet', 'čtyřicet', 'padesát', 'šedesát', 'sedmdesát', 'osmdesát', 'devadesát'];
+const HUNDREDS = ['', 'sto', 'dvě stě', 'tři sta', 'čtyři sta', 'pět set', 'šest set', 'sedm set', 'osm set', 'devět set'];
+
+/** Czech words for a whole number 0..999 999 999, one word per array element. */
+function numberUnits(n) {
+  if (n === 0) return ['nula'];
+  const out = [];
+  const group = (k, one, few, many) => {
+    if (!k) return;
+    if (k !== 1) out.push(...numberUnits(k));
+    out.push(plural(k, one, few, many));
+  };
+  group(Math.floor(n / 1000000), 'milion', 'miliony', 'milionů');
+  group(Math.floor(n / 1000) % 1000, 'tisíc', 'tisíce', 'tisíc');
+  const rest = n % 1000;
+  if (rest >= 100) out.push(...HUNDREDS[Math.floor(rest / 100)].split(' '));
+  const tail = rest % 100;
+  if (tail >= 20) { out.push(TENS[Math.floor(tail / 10)]); if (tail % 10) out.push(ONES[tail % 10]); }
+  else if (tail > 0) out.push(ONES[tail]);
+  return out;
+}
+
+/** Every word that can occur in a spoken number, year, date or time (for the recorded clips). */
+const NUMBER_UNITS = Array.from(new Set([
+  ...ONES, ...TENS.filter(Boolean), ...HUNDREDS.join(' ').split(' ').filter(Boolean),
+  'tisíc', 'tisíce', 'milion', 'miliony', 'milionů', 'rok',
+  ...ORDINAL_GEN.filter(Boolean), 'třicátého', ...MONTHS_GEN,
+  'hodina', 'hodiny', 'hodin', 'minuta', 'minuty', 'minut',
+]));
+
+/** Make a number/date/time item. `units` are the spoken words, `say` the same as text
+ *  for a voice, `text` the expected answer. */
 function makeNumberItem(kinds, rng = { randInt, choice }) {
   const kind = rng.choice(kinds.length ? kinds : ['small']);
+  const item = (text, units, hint) => ({ kind: 'number', text, units, say: units.join(' '), hint });
   switch (kind) {
-    case 'small': { const n = rng.randInt(0, 100); return { kind: 'number', text: String(n), say: String(n), hint: 'number' }; }
-    case 'medium': { const n = rng.randInt(100, 10000); return { kind: 'number', text: String(n), say: String(n), hint: 'number' }; }
-    case 'large': { const n = rng.randInt(10000, 10000000); return { kind: 'number', text: String(n), say: String(n), hint: 'number' }; }
-    case 'year': { const n = rng.randInt(1500, 2030); return { kind: 'number', text: String(n), say: `rok ${n}`, hint: 'year' }; }
+    case 'small': { const n = rng.randInt(0, 100); return item(String(n), numberUnits(n), 'number'); }
+    case 'medium': { const n = rng.randInt(100, 10000); return item(String(n), numberUnits(n), 'number'); }
+    case 'large': { const n = rng.randInt(10000, 10000000); return item(String(n), numberUnits(n), 'number'); }
+    case 'year': { const n = rng.randInt(1500, 2030); return item(String(n), ['rok', ...numberUnits(n)], 'year'); }
     case 'time': {
       const h = rng.randInt(0, 23), m = rng.randInt(0, 59);
-      const say = `${h} ${plural(h, 'hodina', 'hodiny', 'hodin')} ${m} ${plural(m, 'minuta', 'minuty', 'minut')}`;
-      return { kind: 'number', text: `${h}:${String(m).padStart(2, '0')}`, say, hint: 'time as hh:mm' };
+      const units = [...feminine(numberUnits(h)), plural(h, 'hodina', 'hodiny', 'hodin')];
+      if (m) units.push(...feminine(numberUnits(m)), plural(m, 'minuta', 'minuty', 'minut'));
+      return item(`${h}:${String(m).padStart(2, '0')}`, units, 'time as hh:mm');
     }
     default: {
       const d = rng.randInt(1, 28), mo = rng.randInt(1, 12), y = rng.randInt(1900, 2030);
-      return { kind: 'number', text: `${d}.${mo}.${y}`, say: `${dayOrdinal(d)} ${MONTHS_GEN[mo - 1]} ${y}`, hint: 'date as d. m. yyyy' };
+      return item(`${d}.${mo}.${y}`, [...dayOrdinal(d).split(' '), MONTHS_GEN[mo - 1], ...numberUnits(y)], 'date as d. m. yyyy');
     }
   }
 }
@@ -143,7 +184,7 @@ function commonsMp3(name, h) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { spellingUnits, letterName, band, normalize, charDiff, makeNumberItem, dayOrdinal, commonsMp3, LETTER_NAMES };
+  module.exports = { spellingUnits, letterName, band, normalize, charDiff, makeNumberItem, dayOrdinal, numberUnits, plural, commonsMp3, LETTER_NAMES, NUMBER_UNITS };
 }
 
 /* ---------- app ---------- */
@@ -157,6 +198,8 @@ if (typeof document !== 'undefined') {
     stats: load(KEYS.stats, {}),
     current: null, answered: false, session: { seen: 0, ok: 0 },
     audio: null, voicesSettled: false,
+    ctx: null, playToken: 0, sources: [], clips: null, clipCache: new Map(),
+    piper: null, piperModule: null, synthCache: new Map(),
   };
 
   function load(key, fallback) {
@@ -169,15 +212,130 @@ if (typeof document !== 'undefined') {
   }
   function save(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* ignore */ } }
 
-  /* --- speech --- */
+  /* --- speech ---
+   * Three sources of sound: the device's speech synthesis, the built-in Piper voice
+   * (app/piper.js, loaded on demand), and recorded clips for letter names and number
+   * words (app/audio, played through Web Audio). */
+  const PIPER_PREFIX = 'piper:';
+  function usingPiper() { return state.settings.voice.startsWith(PIPER_PREFIX); }
   function czechVoices() { return state.voices.filter((v) => v.lang && v.lang.toLowerCase().startsWith('cs')); }
   function currentVoice() {
     const cz = czechVoices();
     return cz.find((v) => v.voiceURI === state.settings.voice) || cz[0] || null;
   }
+  function audioContext() {
+    if (!state.ctx) state.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (state.ctx.state === 'suspended') state.ctx.resume();
+    return state.ctx;
+  }
+  function setPlayStatus(msg) {
+    const el = $('#play-status');
+    el.textContent = msg;
+    el.hidden = !msg;
+  }
   function stopAudio() {
     if ('speechSynthesis' in window) speechSynthesis.cancel();
     if (state.audio) { state.audio.pause(); state.audio = null; }
+    state.playToken += 1;
+    for (const s of state.sources) { try { s.stop(); } catch { /* already ended */ } }
+    state.sources = [];
+    setPlayStatus('');
+  }
+  /** Schedule decoded buffers back to back with `gap` seconds between them. */
+  function playSequence(buffers, { gap = 0, rate = 1 } = {}, token) {
+    if (token !== state.playToken) return;
+    const ctx = audioContext();
+    let t = ctx.currentTime + 0.05;
+    for (const buf of buffers) {
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.playbackRate.value = rate;
+      src.connect(ctx.destination);
+      src.start(t);
+      state.sources.push(src);
+      t += buf.duration / rate + gap;
+    }
+  }
+  /** Decoded clip from app/audio, cached for the session. */
+  function clipBuffer(file) {
+    if (!state.clipCache.has(file)) {
+      const p = fetch(`audio/${file}`)
+        .then((r) => { if (!r.ok) throw new Error(`${r.status} for ${file}`); return r.arrayBuffer(); })
+        .then((bytes) => audioContext().decodeAudioData(bytes))
+        .catch((e) => { state.clipCache.delete(file); throw e; });
+      state.clipCache.set(file, p);
+    }
+    return state.clipCache.get(file);
+  }
+  /** Files for the clips that spell `word`, or null if any letter has no clip. */
+  function spellingClips(word) {
+    if (!state.clips) return null;
+    const files = spellingUnits(word).map((u) => state.clips.letters[letterName(u)]);
+    return files.every(Boolean) ? files : null;
+  }
+  /** Files for a number's words (mid-phrase form, falling form for the last), or null. */
+  function numberClips(units) {
+    if (!state.clips) return null;
+    const files = units.map((u, i) => (state.clips.numbers[u] || {})[i === units.length - 1 ? 'f' : 'm']);
+    return files.every(Boolean) ? files : null;
+  }
+  /** Play clips in order; if one cannot be fetched (offline, first visit) run `fallback`. */
+  async function playClips(files, { gap, rate }, fallback) {
+    stopAudio();
+    const token = state.playToken;
+    let buffers;
+    try { buffers = await Promise.all(files.map(clipBuffer)); } catch { if (token === state.playToken) fallback(); return; }
+    playSequence(buffers, { gap, rate: Math.min(1.25, Math.max(0.75, rate)) }, token);
+  }
+  function clipsUsable() { return state.settings.useClips && state.clips && (window.AudioContext || window.webkitAudioContext); }
+  /** Fetch every clip once in the background so spelling and numbers work offline later. */
+  async function warmClipCache() {
+    if (!state.clips || !navigator.onLine) return;
+    const files = [...Object.values(state.clips.letters), ...Object.values(state.clips.numbers).flatMap((v) => Object.values(v))];
+    for (let i = 0; i < files.length; i += 8) {
+      await Promise.all(files.slice(i, i + 8).map((f) => fetch(`audio/${f}`).catch(() => {})));
+    }
+  }
+
+  function piperStatus(p, label) {
+    const mb = (n) => `${Math.round(n / 1e6)} MB`;
+    const msg = p.phase === 'voice' ? `Downloading ${label}: ${mb(p.loaded)} of ${mb(p.total)}…`
+      : p.phase === 'runtime' ? 'Loading the speech runtime…'
+        : p.phase === 'init' ? 'Preparing the voice…' : p.phase === 'ready' ? `${label} is ready.` : '';
+    const el = $('#voice-status');
+    el.textContent = msg; el.hidden = !msg;
+    setPlayStatus(p.phase === 'ready' ? '' : msg);
+  }
+  /** The built-in voice engine for the selected voice, loading it (once) if needed. */
+  function piperEngine() {
+    const id = state.settings.voice.slice(PIPER_PREFIX.length);
+    if (state.piper && state.piper.id === id) return state.piper.promise;
+    const label = (state.piperModule && state.piperModule.VOICES[id] || { label: id }).label;
+    const promise = (async () => {
+      const mod = state.piperModule || await import('./piper.js');
+      state.piperModule = mod;
+      const engine = await mod.loadVoice(id, (p) => piperStatus(p, label));
+      piperStatus({ phase: 'ready' }, label);
+      return engine;
+    })().catch((e) => { state.piper = null; throw e; });
+    state.piper = { id, promise };
+    return promise;
+  }
+  async function piperSpeak(text, rate, token) {
+    const engine = await piperEngine();
+    if (token !== state.playToken) return;
+    setPlayStatus('…');
+    const key = `${text}\u0000${rate}`;
+    if (!state.synthCache.has(key)) {
+      const { samples, sampleRate } = await engine.synthesize(text, { lengthScale: 1 / rate });
+      const buf = audioContext().createBuffer(1, samples.length, sampleRate);
+      buf.copyToChannel(samples, 0);
+      if (state.synthCache.size > 40) state.synthCache.delete(state.synthCache.keys().next().value);
+      state.synthCache.set(key, buf);
+    }
+    if (token !== state.playToken) return;
+    setPlayStatus('');
+    playSequence([state.synthCache.get(key)], {}, token);
   }
   function utter(text, rate) {
     const u = new SpeechSynthesisUtterance(text);
@@ -188,16 +346,36 @@ if (typeof document !== 'undefined') {
     return u;
   }
   function speak(text, rate = state.settings.rate) {
-    if (!('speechSynthesis' in window)) return;
     stopAudio();
+    if (usingPiper()) {
+      const token = state.playToken;
+      piperSpeak(text, rate, token).catch((e) => {
+        if (token !== state.playToken) return;
+        setPlayStatus(`Built-in voice failed (${e.message}).${czechVoices().length ? ' Using the device voice.' : ''}`);
+        if (czechVoices().length) speechSynthesis.speak(utter(text, rate));
+      });
+      return;
+    }
+    if (!('speechSynthesis' in window)) return;
     speechSynthesis.speak(utter(text, rate));
   }
-  function speakSpelling(word, rate = state.settings.rate) {
+  function speakSpelling(word, rate = state.settings.rate, slow = false) {
+    const files = clipsUsable() ? spellingClips(word) : null;
+    if (files) { playClips(files, { gap: slow ? 0.9 : 0.35, rate }, () => speakSpellingWithVoice(word, rate)); return; }
+    speakSpellingWithVoice(word, rate);
+  }
+  function speakSpellingWithVoice(word, rate) {
+    if (usingPiper()) { speak(`${spellingUnits(word).map((u) => letterName(u)).join(', ')}.`, rate); return; }
     if (!('speechSynthesis' in window)) return;
     stopAudio();
     for (const unit of spellingUnits(word)) {
       speechSynthesis.speak(utter(letterName(unit), rate * 0.9));
     }
+  }
+  function speakNumber(it, rate, slow = false) {
+    const files = clipsUsable() ? numberClips(it.units) : null;
+    if (files) playClips(files, { gap: slow ? 0.5 : 0.1, rate }, () => speak(it.say, rate));
+    else speak(it.say, rate);
   }
   function playRecording(entry, onFail) {
     const a = new Audio(commonsMp3(entry.a, entry.h));
@@ -209,13 +387,14 @@ if (typeof document !== 'undefined') {
     const it = state.current;
     if (!it) return;
     const rate = slow ? state.settings.rate * 0.65 : state.settings.rate;
-    if (it.kind === 'spell') { speakSpelling(it.text, rate); return; }
+    if (it.kind === 'spell') { speakSpelling(it.text, rate, slow); return; }
+    if (it.kind === 'number') { speakNumber(it, rate, slow); return; }
     if (it.kind === 'word' && state.settings.preferRecordings && navigator.onLine && it.entry && it.entry.a && !slow) {
       stopAudio();
       playRecording(it.entry, () => speak(it.text, rate));
       return;
     }
-    speak(it.say || it.text, rate);
+    speak(it.text, rate);
   }
 
   /* --- item selection --- */
@@ -395,19 +574,32 @@ if (typeof document !== 'undefined') {
       o.value = v.voiceURI; o.textContent = `${v.name} (${v.lang})${v.localService ? '' : ' · online'}`;
       sel.appendChild(o);
     }
+    const builtIn = document.createElement('optgroup');
+    builtIn.label = 'Built-in voice (downloads about 95 MB once, then works offline)';
+    const piperVoices = state.piperModule ? state.piperModule.VOICES : {};
+    for (const [id, v] of Object.entries(piperVoices)) {
+      const o = document.createElement('option');
+      o.value = PIPER_PREFIX + id; o.textContent = `${v.label} · Piper`;
+      builtIn.appendChild(o);
+    }
+    sel.appendChild(builtIn);
     const chosen = currentVoice();
-    if (chosen) sel.value = chosen.voiceURI;
+    if (usingPiper() && piperVoices[state.settings.voice.slice(PIPER_PREFIX.length)]) sel.value = state.settings.voice;
+    else if (chosen) sel.value = chosen.voiceURI;
     const warn = $('#voice-warning');
+    const builtInHint = ' Or choose the built-in voice under Settings › Czech voice.';
     let msg = '';
-    if (!('speechSynthesis' in window)) msg = 'This browser has no speech synthesis. Try Chrome or Safari.';
-    else if (!cz.length && state.voices.length) msg = 'No Czech voice is installed. Android: Settings › System › Languages › Text-to-speech › install Czech. iOS: Settings › Accessibility › Spoken Content › Voices › Czech.';
-    else if (!cz.length && state.voicesSettled) msg = 'This browser reports no speech voices at all, so nothing can be played here.';
+    if (usingPiper()) msg = '';
+    else if (!('speechSynthesis' in window)) msg = `This browser has no speech synthesis.${builtInHint}`;
+    else if (!cz.length && state.voices.length) msg = `No Czech voice is installed. Android: Settings › System › Languages › Text-to-speech › install Czech. iOS: Settings › Accessibility › Spoken Content › Voices › Czech.${builtInHint}`;
+    else if (!cz.length && state.voicesSettled) msg = `This browser reports no speech voices at all.${builtInHint}`;
     warn.textContent = msg;
     warn.hidden = !msg;
   }
   function applySettingsToForm() {
     const s = state.settings;
     $('#rate').value = s.rate; $('#rate-val').textContent = `${s.rate}×`;
+    $('#use-clips').checked = s.useClips;
     $('#prefer-recordings').checked = s.preferRecordings;
     $('#auto-play').checked = s.autoPlay;
     setChecked('#pos-filter', s.pos); setChecked('#band-filter', s.bands); setChecked('#number-kinds', s.numberKinds);
@@ -419,6 +611,7 @@ if (typeof document !== 'undefined') {
     const s = state.settings;
     s.voice = $('#voice').value;
     s.rate = parseFloat($('#rate').value); $('#rate-val').textContent = `${s.rate}×`;
+    s.useClips = $('#use-clips').checked;
     s.preferRecordings = $('#prefer-recordings').checked;
     s.autoPlay = $('#auto-play').checked;
     s.pos = checkedValues('#pos-filter');
@@ -447,7 +640,7 @@ if (typeof document !== 'undefined') {
     $('#answer-form').onsubmit = (ev) => { ev.preventDefault(); if (state.answered) showItem(nextItem()); else check(false); };
     $('#skip').onclick = () => check(true);
     $('#next').onclick = () => showItem(nextItem());
-    $('#say-word').onclick = () => { const it = state.current; if (it) speak(it.kind === 'number' ? it.say : it.text); };
+    $('#say-word').onclick = () => { const it = state.current; if (!it) return; if (it.kind === 'number') speakNumber(it, state.settings.rate); else speak(it.text); };
     $('#add-current').onclick = () => { const it = state.current; if (it) addToList(it.text, it.gloss); $('#add-current').textContent = '✓ Added'; setTimeout(() => { $('#add-current').textContent = '＋ Add to my list'; }, 1200); };
 
     $('#add-form').onsubmit = (ev) => { ev.preventDefault(); addToList($('#add-word').value, $('#add-gloss').value.trim()); $('#add-word').value = ''; $('#add-gloss').value = ''; $('#add-word').focus(); };
@@ -463,6 +656,12 @@ if (typeof document !== 'undefined') {
     };
 
     document.querySelectorAll('#tab-settings input, #tab-settings select').forEach((el) => { el.onchange = readSettingsFromForm; });
+    $('#voice').onchange = () => {
+      readSettingsFromForm();
+      renderVoices();
+      if (!usingPiper()) { $('#voice-status').hidden = true; return; }
+      piperEngine().catch((e) => { const el = $('#voice-status'); el.textContent = `Could not load the built-in voice: ${e.message}`; el.hidden = false; });
+    };
     $('#rate').oninput = readSettingsFromForm;
     $('#test-voice').onclick = () => speak('Dobrý den. Toto je zkouška hlasu.');
     $('#reset-stats').onclick = () => { if (confirm('Delete all progress statistics?')) { state.stats = {}; save(KEYS.stats, state.stats); state.session = { seen: 0, ok: 0 }; renderStats(); } };
@@ -481,10 +680,18 @@ if (typeof document !== 'undefined') {
     state.words = wd.words; state.sentences = sd.sentences;
     $('#build').textContent = `Build ${BUILD} · ${wd.meta.count} words · ${sd.meta.count} sentences`;
   }
+  /** Optional extras: the clip manifest and the built-in voice list. Failure just disables them. */
+  async function loadExtras() {
+    await Promise.all([
+      fetch('audio/manifest.json').then((r) => (r.ok ? r.json() : null)).then((m) => { state.clips = m; return warmClipCache(); }).catch(() => {}),
+      import('./piper.js').then((m) => { state.piperModule = m; renderVoices(); }).catch(() => {}),
+    ]);
+  }
 
   async function main() {
     wire();
     applySettingsToForm();
+    loadExtras();
     renderList();
     $('#alphabet').textContent = Object.entries(LETTER_NAMES).filter(([k]) => k.trim() && k !== '-' && k !== "'").map(([k, v]) => `${k} = ${Array.isArray(v) ? v.join(' / ') : v}`).join(', ');
     try { await loadData(); } catch (e) { $('#hint').textContent = `Could not load data: ${e.message}`; return; }

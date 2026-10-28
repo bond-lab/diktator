@@ -51,6 +51,7 @@
       <button id="play" class="big">▶ Play</button>
       <button id="play-slow" title="Play slowly">🐢</button>
       <span id="hint" class="muted"></span>
+      <span id="play-status" class="muted" hidden></span>
     </div>
     <form id="answer-form" autocomplete="off">
       <input id="answer" type="text" lang="cs" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type what you hear…">
@@ -94,7 +95,9 @@
   <label>Czech voice
     <select id="voice"></select>
   </label>
+  <p id="voice-status" class="muted" hidden></p>
   <label>Speed <input id="rate" type="range" min="0.5" max="1.3" step="0.05" value="0.95"> <span id="rate-val"></span></label>
+  <label><input id="use-clips" type="checkbox" checked> Use the built-in recordings for spelling and numbers (works without any voice)</label>
   <label><input id="prefer-recordings" type="checkbox"> Prefer human recordings (Wikimedia Commons) when online</label>
   <label><input id="auto-play" type="checkbox" checked> Play automatically when a new item appears</label>
   <button id="test-voice">Test voice</button>
@@ -140,7 +143,7 @@
 <section id="tab-about" class="tab">
   <h2>About</h2>
   <p>Diktátor is a small offline-capable web app for practising Czech dictation. Install it from your browser menu (“Add to Home Screen”).</p>
-  <p>Speech comes from your phone’s own Czech text-to-speech voice. On Android install the Czech voice in Google Text-to-speech settings; on iOS add a Czech voice under Settings › Accessibility › Spoken Content › Voices.</p>
+  <p>Spelling and numbers are played from recorded clips bundled with the app, so they work on any device. Words and sentences need a voice: either your phone’s own Czech text-to-speech voice (on Android install Czech in Google Text-to-speech settings; on iOS add a Czech voice under Settings › Accessibility › Spoken Content › Voices), or the built-in voice chosen in Settings, which downloads about 95 MB once and then runs inside the browser, offline.</p>
   <h3>Spelling alphabet</h3>
   <p>Letters are read out with Czech letter names; where several are listed, one is chosen at random each time: <span id="alphabet"></span></p>
   <h3>Data and acknowledgements</h3>
@@ -152,6 +155,7 @@
     <li><a href="https://github.com/hermitdave/FrequencyWords">FrequencyWords</a> by Hermit Dave (CC BY-SA 4.0), from OpenSubtitles2018 (Lison &amp; Tiedemann 2016): frequency bands.</li>
     <li><a href="https://tatoeba.org/">Tatoeba</a> (CC BY 2.0 FR): sentences and translations; each result links to its Tatoeba page and contributors.</li>
     <li><a href="https://commons.wikimedia.org/wiki/Category:Czech_pronunciation">Wikimedia Commons</a> and <a href="https://lingualibre.org/">Lingua Libre</a> recordings (CC BY-SA, per file): streamed on demand; each result links to the file page with its author and licence.</li>
+    <li><a href="https://github.com/rhasspy/piper">Piper</a> text-to-speech (MIT) by Michael Hansen and the Rhasspy project, with the Czech voices <em>jirka</em> (dataset CC0) and <em>kasandra</em> (recordings by Ondřej Šimek, CC BY 4.0) from <a href="https://huggingface.co/rhasspy/piper-voices">rhasspy/piper-voices</a>. The bundled letter and number clips were synthesised with jirka. The built-in voice runs in the browser with <a href="https://onnxruntime.ai/">ONNX Runtime Web</a> (MIT) and <a href="https://github.com/rhasspy/piper-phonemize">piper-phonemize</a> / <a href="https://github.com/espeak-ng/espeak-ng">espeak-ng</a> (GPL-3.0) compiled to WebAssembly by <a href="https://github.com/diffusion-studio/vits-web">Diffusion Studio</a>.</li>
   </ul>
   <p>Source code and full references: <a href="https://github.com/bond-lab/diktator">github.com/bond-lab/diktator</a>.</p>
   <p class="muted" id="build"></p>

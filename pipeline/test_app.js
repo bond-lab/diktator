@@ -38,13 +38,35 @@ assert.equal(app.dayOrdinal(21), 'dvacátého prvního');
 assert.equal(app.dayOrdinal(30), 'třicátého');
 assert.equal(app.dayOrdinal(31), 'třicátého prvního');
 
+assert.deepEqual(app.numberUnits(0), ['nula']);
+assert.deepEqual(app.numberUnits(21), ['dvacet', 'jedna']);
+assert.deepEqual(app.numberUnits(200), ['dvě', 'stě']);
+assert.deepEqual(app.numberUnits(345), ['tři', 'sta', 'čtyřicet', 'pět']);
+assert.deepEqual(app.numberUnits(1000), ['tisíc']);
+assert.deepEqual(app.numberUnits(1001), ['tisíc', 'jedna']);
+assert.deepEqual(app.numberUnits(2000), ['dva', 'tisíce']);
+assert.deepEqual(app.numberUnits(22000), ['dvacet', 'dva', 'tisíce']);
+assert.deepEqual(app.numberUnits(21000), ['dvacet', 'jedna', 'tisíc']);
+assert.deepEqual(app.numberUnits(1989), ['tisíc', 'devět', 'set', 'osmdesát', 'devět']);
+assert.deepEqual(app.numberUnits(5000000), ['pět', 'milionů']);
+assert.deepEqual(app.numberUnits(10000000), ['deset', 'milionů']);
+assert.equal(app.plural(1, 'hodina', 'hodiny', 'hodin'), 'hodina');
+assert.equal(app.plural(3, 'hodina', 'hodiny', 'hodin'), 'hodiny');
+assert.equal(app.plural(12, 'hodina', 'hodiny', 'hodin'), 'hodin');
+assert.equal(app.plural(23, 'hodina', 'hodiny', 'hodin'), 'hodiny');
+for (let n = 0; n <= 10000000; n = n * 7 + 1) {
+  for (const u of app.numberUnits(n)) assert.ok(app.NUMBER_UNITS.includes(u), `${u} not in NUMBER_UNITS`);
+}
+const twoRng = { randInt: () => 2, choice: (a) => a[0] };
+assert.deepEqual(app.makeNumberItem(['time'], twoRng).units, ['dvě', 'hodiny', 'dvě', 'minuty']);
+
 const rng = { randInt: (lo) => lo, choice: (a) => a[0] };
-assert.deepEqual(app.makeNumberItem(['date'], rng), { kind: 'number', text: '1.1.1900', say: 'prvního ledna 1900', hint: 'date as d. m. yyyy' });
-assert.deepEqual(app.makeNumberItem(['time'], rng), { kind: 'number', text: '0:00', say: '0 hodin 0 minut', hint: 'time as hh:mm' });
-assert.equal(app.makeNumberItem(['year'], rng).say, 'rok 1500');
+assert.deepEqual(app.makeNumberItem(['date'], rng), { kind: 'number', text: '1.1.1900', units: ['prvního', 'ledna', 'tisíc', 'devět', 'set'], say: 'prvního ledna tisíc devět set', hint: 'date as d. m. yyyy' });
+assert.deepEqual(app.makeNumberItem(['time'], rng).say, 'nula hodin');
+assert.equal(app.makeNumberItem(['year'], rng).say, 'rok tisíc pět set');
 for (let i = 0; i < 200; i += 1) {
   const it = app.makeNumberItem(['small', 'medium', 'large', 'year', 'date', 'time']);
-  assert.equal(it.kind, 'number'); assert.ok(it.text && it.say);
+  assert.equal(it.kind, 'number'); assert.ok(it.text && it.say && it.units.length);
 }
 
 assert.equal(app.commonsMp3('Cs-dům.ogg', '3e'), 'https://upload.wikimedia.org/wikipedia/commons/transcoded/3/3e/Cs-d%C5%AFm.ogg/Cs-d%C5%AFm.ogg.mp3');
