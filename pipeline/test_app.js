@@ -57,6 +57,19 @@ assert.equal(app.plural(23, 'hodina', 'hodiny', 'hodin'), 'hodiny');
 for (let n = 0; n <= 10000000; n = n * 7 + 1) {
   for (const u of app.numberUnits(n)) assert.ok(app.NUMBER_UNITS.includes(u), `${u} not in NUMBER_UNITS`);
 }
+assert.deepEqual(app.groupUnits('012'), ['nula', 'dvanáct']);
+assert.deepEqual(app.groupUnits('001'), ['nula', 'nula', 'jedna']);
+assert.deepEqual(app.groupUnits('000'), ['nula', 'nula', 'nula']);
+assert.deepEqual(app.groupUnits('456'), ['čtyři', 'sta', 'padesát', 'šest']);
+{
+  const it = app.makeNumberItem(['phone'], { randInt: () => 12345678, choice: (a) => a[0] });
+  assert.equal(it.text, '612 345 678');
+  assert.equal(it.say, 'šest set dvanáct, tři sta čtyřicet pět, šest set sedmdesát osm');
+  const pc = app.makeNumberItem(['postcode'], { randInt: () => 12000, choice: (a) => a[0] });
+  assert.equal(pc.text, '120 00');
+  assert.deepEqual(pc.units, ['sto', 'dvacet', ',', 'nula', 'nula']);
+  assert.equal(app.normalize(' 120 00 ', 'number', s), app.normalize('12000', 'number', s));
+}
 const twoRng = { randInt: () => 2, choice: (a) => a[0] };
 assert.deepEqual(app.makeNumberItem(['time'], twoRng).units, ['dvě', 'hodiny', 'dvě', 'minuty']);
 
@@ -65,8 +78,9 @@ assert.deepEqual(app.makeNumberItem(['date'], rng), { kind: 'number', text: '1.1
 assert.deepEqual(app.makeNumberItem(['time'], rng).say, 'nula hodin');
 assert.equal(app.makeNumberItem(['year'], rng).say, 'rok tisíc pět set');
 for (let i = 0; i < 200; i += 1) {
-  const it = app.makeNumberItem(['small', 'medium', 'large', 'year', 'date', 'time']);
+  const it = app.makeNumberItem(['small', 'medium', 'large', 'year', 'date', 'time', 'phone', 'postcode']);
   assert.equal(it.kind, 'number'); assert.ok(it.text && it.say && it.units.length);
+  for (const u of it.units) assert.ok(u === ',' || app.NUMBER_UNITS.includes(u), `${u} has no clip`);
 }
 
 assert.equal(app.commonsMp3('Cs-dům.ogg', '3e'), 'https://upload.wikimedia.org/wikipedia/commons/transcoded/3/3e/Cs-d%C5%AFm.ogg/Cs-d%C5%AFm.ogg.mp3');

@@ -38,7 +38,7 @@ const ORDINAL_GEN = ['', 'prvního', 'druhého', 'třetího', 'čtvrtého', 'pá
 const DEFAULT_SETTINGS = {
   voice: '', rate: 0.95, useClips: true, preferRecordings: false, autoPlay: true,
   pos: ['n', 'v', 'a', 'r'], bands: [1, 2, 3], minLen: 3,
-  numberKinds: ['small', 'medium', 'year', 'date'],
+  numberKinds: ['small', 'medium', 'year', 'date', 'phone', 'postcode'],
   caseSensitive: false, punctSensitive: false,
 };
 
@@ -154,12 +154,30 @@ const NUMBER_UNITS = Array.from(new Set([
   'hodina', 'hodiny', 'hodin', 'minuta', 'minuty', 'minut',
 ]));
 
-/** Make a number/date/time item. `units` are the spoken words, `say` the same as text
- *  for a voice, `text` the expected answer. */
+/** Words for a digit group as read in phone numbers and post codes: leading zeros are 'nula'. */
+function groupUnits(digits) {
+  const out = [];
+  let i = 0;
+  while (i < digits.length - 1 && digits[i] === '0') { out.push('nula'); i += 1; }
+  return out.concat(numberUnits(parseInt(digits.slice(i), 10)));
+}
+
+/** Make a number/date/time item. `units` are the spoken words (',' = a short pause),
+ *  `say` the same as text for a voice, `text` the expected answer. */
 function makeNumberItem(kinds, rng = { randInt, choice }) {
   const kind = rng.choice(kinds.length ? kinds : ['small']);
-  const item = (text, units, hint) => ({ kind: 'number', text, units, say: units.join(' '), hint });
+  const item = (text, units, hint) => ({ kind: 'number', text, units, say: units.join(' ').replace(/ ,/g, ','), hint });
+  const grouped = (groups) => groups.flatMap((g, i) => (i ? [',', ...groupUnits(g)] : groupUnits(g)));
   switch (kind) {
+    case 'phone': {
+      const d = rng.choice(['6', '7', '7', '2', '3', '5']) + String(rng.randInt(0, 99999999)).padStart(8, '0');
+      const groups = [d.slice(0, 3), d.slice(3, 6), d.slice(6)];
+      return item(groups.join(' '), grouped(groups), 'phone number (9 digits)');
+    }
+    case 'postcode': {
+      const d = String(rng.randInt(10000, 79999));
+      return item(`${d.slice(0, 3)} ${d.slice(3)}`, grouped([d.slice(0, 3), d.slice(3)]), 'post code (5 digits)');
+    }
     case 'small': { const n = rng.randInt(0, 100); return item(String(n), numberUnits(n), 'number'); }
     case 'medium': { const n = rng.randInt(100, 10000); return item(String(n), numberUnits(n), 'number'); }
     case 'large': { const n = rng.randInt(10000, 10000000); return item(String(n), numberUnits(n), 'number'); }
@@ -184,7 +202,7 @@ function commonsMp3(name, h) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { spellingUnits, letterName, band, normalize, charDiff, makeNumberItem, dayOrdinal, numberUnits, plural, commonsMp3, LETTER_NAMES, NUMBER_UNITS };
+  module.exports = { spellingUnits, letterName, band, normalize, charDiff, makeNumberItem, dayOrdinal, numberUnits, groupUnits, plural, commonsMp3, LETTER_NAMES, NUMBER_UNITS };
 }
 
 /* ---------- app ---------- */
@@ -241,12 +259,13 @@ if (typeof document !== 'undefined') {
     state.sources = [];
     setPlayStatus('');
   }
-  /** Schedule decoded buffers back to back with `gap` seconds between them. */
+  /** Schedule decoded buffers back to back with `gap` seconds between them; null = a pause. */
   function playSequence(buffers, { gap = 0, rate = 1 } = {}, token) {
     if (token !== state.playToken) return;
     const ctx = audioContext();
     let t = ctx.currentTime + 0.05;
     for (const buf of buffers) {
+      if (!buf) { t += 0.3 + 2 * gap; continue; }
       const src = ctx.createBufferSource();
       src.buffer = buf;
       src.playbackRate.value = rate;
@@ -273,18 +292,19 @@ if (typeof document !== 'undefined') {
     const files = spellingUnits(word).map((u) => state.clips.letters[letterName(u)]);
     return files.every(Boolean) ? files : null;
   }
-  /** Files for a number's words (mid-phrase form, falling form for the last), or null. */
+  /** Files for a number's words (mid-phrase form, falling form for the last; null = a pause),
+   *  or null when some word has no clip. */
   function numberClips(units) {
     if (!state.clips) return null;
-    const files = units.map((u, i) => (state.clips.numbers[u] || {})[i === units.length - 1 ? 'f' : 'm']);
-    return files.every(Boolean) ? files : null;
+    const files = units.map((u, i) => (u === ',' ? null : (state.clips.numbers[u] || {})[i === units.length - 1 ? 'f' : 'm']));
+    return files.every((f) => f !== undefined) ? files : null;
   }
   /** Play clips in order; if one cannot be fetched (offline, first visit) run `fallback`. */
   async function playClips(files, { gap, rate }, fallback) {
     stopAudio();
     const token = state.playToken;
     let buffers;
-    try { buffers = await Promise.all(files.map(clipBuffer)); } catch { if (token === state.playToken) fallback(); return; }
+    try { buffers = await Promise.all(files.map((f) => (f ? clipBuffer(f) : null))); } catch { if (token === state.playToken) fallback(); return; }
     playSequence(buffers, { gap, rate: Math.min(1.25, Math.max(0.75, rate)) }, token);
   }
   function clipsUsable() { return state.settings.useClips && state.clips && (window.AudioContext || window.webkitAudioContext); }

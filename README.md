@@ -15,7 +15,7 @@ type is sent anywhere.
 | Spelling | The word is spelled out letter by letter with Czech letter names (dé, ú s kroužkem, em …) from recorded clips; you type the word. |
 | Dictation: words | A word is said; you type it. Optionally plays a human recording from Wikimedia Commons when one exists. |
 | Dictation: sentences | A short Tatoeba sentence is said; you type it. |
-| Numbers and dates | Numbers, years, dates and times are composed from recorded number words (tisíc devět set osmdesát devět); you type them in digits. |
+| Numbers and dates | Numbers, years, dates, times, phone numbers and post codes are composed from recorded number words (tisíc devět set osmdesát devět); you type them in digits. |
 
 Source can be a random sample (filtered by part of speech, frequency band and
 length), your own word list, or words you have got wrong before. Answers are
