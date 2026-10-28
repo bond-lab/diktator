@@ -288,6 +288,23 @@ if (typeof document !== 'undefined') {
     playSequence(buffers, { gap, rate: Math.min(1.25, Math.max(0.75, rate)) }, token);
   }
   function clipsUsable() { return state.settings.useClips && state.clips && (window.AudioContext || window.webkitAudioContext); }
+  function voiceAvailable() { return usingPiper() || czechVoices().length > 0; }
+  /** Can this item be played at all with the current voice and clips? */
+  function canPlay(it) {
+    if (!it) return false;
+    if (voiceAvailable()) return true;
+    if (it.kind === 'number') return Boolean(clipsUsable() && numberClips(it.units));
+    if (it.kind === 'spell') return Boolean(clipsUsable() && spellingClips(it.text));
+    return Boolean(it.kind === 'word' && state.settings.preferRecordings && it.entry && it.entry.a && navigator.onLine);
+  }
+  /** Grey out the play buttons when nothing could be heard. */
+  function refreshPlayable() {
+    const it = state.current;
+    const ok = canPlay(it);
+    $('#play').disabled = !ok;
+    $('#play-slow').disabled = !ok;
+    $('#say-word').disabled = !(it && (it.kind === 'number' ? ok : voiceAvailable()));
+  }
   /** Fetch every clip once in the background so spelling and numbers work offline later. */
   async function warmClipCache() {
     if (!state.clips || !navigator.onLine) return;
@@ -463,10 +480,10 @@ if (typeof document !== 'undefined') {
     $('#skip').hidden = false;
     if (!it) {
       $('#hint').textContent = 'Nothing to practise with these settings. Add words to your list or widen the filters.';
-      $('#play').disabled = true;
+      refreshPlayable();
       return;
     }
-    $('#play').disabled = false;
+    refreshPlayable();
     const hints = [];
     if (it.kind === 'number') hints.push(it.hint);
     if (it.entry && it.entry.p) hints.push(POS_NAMES[it.entry.p] || it.entry.p);
@@ -595,6 +612,7 @@ if (typeof document !== 'undefined') {
     else if (!cz.length && state.voicesSettled) msg = `This browser reports no speech voices at all.${builtInHint}`;
     warn.textContent = msg;
     warn.hidden = !msg;
+    refreshPlayable();
   }
   function applySettingsToForm() {
     const s = state.settings;
@@ -622,6 +640,7 @@ if (typeof document !== 'undefined') {
     s.punctSensitive = $('#punct-sensitive').checked;
     save(KEYS.settings, s);
     renderStats();
+    refreshPlayable();
   }
 
   /* --- wiring --- */

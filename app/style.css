@@ -38,7 +38,7 @@ button:disabled { opacity: 0.5; }
 #verdict.ok { color: var(--ok); }
 #verdict.bad { color: var(--bad); }
 #diff { font-size: 1.3rem; font-family: ui-monospace, Menlo, Consolas, monospace; margin: 4px 0; word-break: break-word; }
-#diff .ins { background: var(--ins); text-decoration: line-through; }
+#diff .ins { background: var(--ins); text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: var(--bad); }
 #diff .del { background: var(--del); }
 #diff .exp { margin-top: 4px; }
 .muted { color: var(--muted); font-size: 0.92rem; }

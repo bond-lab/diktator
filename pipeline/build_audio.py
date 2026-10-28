@@ -31,9 +31,29 @@ from piper import PiperVoice
 
 APP_JS = Path(__file__).resolve().parent.parent / "app" / "app.js"
 FFMPEG_TRIM = (
-    "silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
-    "silenceremove=start_periods=1:start_threshold=-45dB,areverse"
+    "silenceremove=start_periods=1:start_threshold=-55dB:start_silence=0.04,areverse,"
+    "silenceremove=start_periods=1:start_threshold=-55dB:start_silence=0.06,areverse"
 )
+# espeak-ng reads a lone vowel letter as its Czech alphabet name ("a" -> "á", "á" ->
+# "dlouhé á"), which doubles or lengthens these letter names, so they are given to the
+# phonemiser as IPA (piper-phonemize passes [[...]] through unchanged).
+SPOKEN = {
+    "a": "[[ˈa.]]",
+    "krátké a": "[[krˈaːtkeː ˈa.]]",
+    "dlouhé á": "[[dlˈoʊheː ˈaː.]]",
+    "e": "[[ˈe.]]",
+    "krátké e": "[[krˈaːtkeː ˈe.]]",
+    "dlouhé é": "[[dlˈoʊheː ˈeː.]]",
+    "o": "[[ˈo.]]",
+    "krátké o": "[[krˈaːtkeː ˈo.]]",
+    "dlouhé ó": "[[dlˈoʊheː ˈoː.]]",
+    "dlouhé měkké í": "[[dlˈoʊheː mɲˈekeː ˈiː.]]",
+    "měkké dlouhé í": "[[mɲˈekeː dlˈoʊheː ˈiː.]]",
+    "ú s čárkou": "[[ˈuː s tʃˈaːrkoʊ.]]",
+    "dlouhé ú s čárkou": "[[dlˈoʊheː ˈuː s tʃˈaːrkoʊ.]]",
+    "tvrdé dlouhé ý": "[[tvˈr̩deː dlˈoʊheː ˈipsilon.]]",
+    "dlouhé tvrdé ý": "[[dlˈoʊheː tvˈr̩deː ˈipsilon.]]",
+}
 
 
 def spoken_forms() -> tuple[list[str], list[str]]:
@@ -131,7 +151,7 @@ def record(voice: PiperVoice, clip: Clip, tmp: Path) -> str:
         source = clip.human
         if source is None:
             source = tmp / f"{clip.mp3.stem}.wav"
-            synthesize(voice, clip.text, source)
+            synthesize(voice, SPOKEN.get(clip.text[:-1], clip.text), source)
         to_mp3(source, clip.mp3)
     return clip.mp3.name
 
