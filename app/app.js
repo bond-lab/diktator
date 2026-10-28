@@ -7,16 +7,16 @@ const KEYS = { settings: 'diktator.settings', list: 'diktator.list', stats: 'dik
 /** Czech letter names used in spelling mode. 'ch' is one letter. Where people
  *  say a letter several ways, all variants are listed and one is picked at random. */
 const LETTER_NAMES = {
-  a: ['a', 'krátké a'], á: ['dlouhé á'], b: 'bé', c: 'cé', č: 'čé', d: 'dé', ď: 'ďé',
+  a: ['a', 'krátké a'], á: ['dlouhé á'], b: 'bé', c: 'cé', č: ['čé', 'cé s háčkem'], d: 'dé', ď: ['ďé', 'dé s háčkem'],
   e: ['e', 'krátké e'], é: ['dlouhé é'], ě: ['e s háčkem', 'ije'], f: 'ef', g: 'gé', h: 'há', ch: 'chá',
   i: ['měkké i', 'krátké měkké i'], í: ['dlouhé měkké í', 'měkké dlouhé í'],
-  j: 'jé', k: 'ká', l: 'el', m: 'em', n: 'en', ň: 'eň',
+  j: 'jé', k: 'ká', l: 'el', m: 'em', n: 'en', ň: ['eň', 'en s háčkem'],
   o: ['o', 'krátké o'], ó: ['dlouhé ó'], p: 'pé', q: 'kvé',
-  r: 'er', ř: 'eř', s: 'es', š: 'eš', t: 'té', ť: 'ťé',
+  r: 'er', ř: ['eř', 'er s háčkem'], s: 'es', š: ['eš', 'es s háčkem'], t: 'té', ť: ['ťé', 'té s háčkem'],
   u: ['u', 'krátké u'], ú: ['ú s čárkou', 'dlouhé ú s čárkou'], ů: ['u s kroužkem', 'dlouhé u s kroužkem'],
   v: 'vé', w: 'dvojité vé', x: 'iks',
   y: ['tvrdé y', 'ypsilon'], ý: ['tvrdé dlouhé ý', 'dlouhé tvrdé ý', 'dlouhé ypsilon'],
-  z: 'zet', ž: 'žet',
+  z: 'zet', ž: ['žet', 'zet s háčkem'],
   '-': 'pomlčka', ' ': 'mezera', "'": 'apostrof',
 };
 

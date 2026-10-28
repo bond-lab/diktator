@@ -60,7 +60,7 @@ uv run --group audio pipeline/build_audio.py raw/piper/cs_CZ-jirka-medium.onnx a
 
 The script reads the letter names and number words from `app/app.js`, so the
 clips always match what the app can ask for. Human recordings can replace the
-synthesised ones: `build_audio.py --prompts` prints a numbered sheet of the 213
+synthesised ones: `build_audio.py --prompts` prints a numbered sheet of the 220
 things to read (letter names once, number words once with a comma and once with
 a full stop, for mid-phrase and final intonation); record them as
 `<id>.wav` (or mp3/ogg/flac/m4a) in a folder and pass it as a third argument.
